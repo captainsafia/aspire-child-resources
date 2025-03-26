@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json.schemastore.org/aspire-8.0.json",
+  "resources": {
+    "cosmos": {
+      "type": "azure.bicep.v0",
+      "connectionString": "{cosmos.outputs.connectionString}",
+      "path": "cosmos.module.bicep",
+      "params": {
+        "principalId": ""
+      }
+    },
+    "appointments-app-db": {
+      "type": "value.v0",
+      "connectionString": "AccountEndpoint={cosmos.outputs.connectionString};Database=appointments-app-db"
+    },
+    "appointments": {
+      "type": "value.v0",
+      "connectionString": "AccountEndpoint={cosmos.outputs.connectionString};Database=appointments-app-db;Container=appointments"
+    },
+    "servicebus": {
+      "type": "azure.bicep.v0",
+      "connectionString": "{servicebus.outputs.serviceBusEndpoint}",
+      "path": "servicebus.module.bicep",
+      "params": {
+        "principalType": "",
+        "principalId": ""
+      }
+    },
+    "appointment-requests": {
+      "type": "value.v0",
+      "connectionString": "Endpoint={servicebus.outputs.serviceBusEndpoint};EntityPath=appointment-requests"
+    },
+    "appointment-processor": {
+      "type": "project.v0",
+      "path": "AppointmentProcessor/AppointmentProcessor.csproj",
+      "env": {
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
+        "ConnectionStrings__appointments-app-db": "{appointments-app-db.connectionString}",
+        "ConnectionStrings__appointment-requests": "{appointment-requests.connectionString}"
+      }
+    },
+    "api": {
+      "type": "project.v0",
+      "path": "Api/Api.csproj",
+      "env": {
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES": "true",
+        "OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY": "in_memory",
+        "ASPNETCORE_FORWARDEDHEADERS_ENABLED": "true",
+        "HTTP_PORTS": "{api.bindings.http.targetPort}",
+        "ConnectionStrings__appointments": "{appointments.connectionString}",
+        "ConnectionStrings__appointment-requests": "{appointment-requests.connectionString}"
+      },
+      "bindings": {
+        "http": {
+          "scheme": "http",
+          "protocol": "tcp",
+          "transport": "http",
+          "external": true
+        },
+        "https": {
+          "scheme": "https",
+          "protocol": "tcp",
+          "transport": "http",
+          "external": true
+        }
+      }
+    }
+  }
+}

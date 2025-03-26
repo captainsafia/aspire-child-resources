@@ -1,0 +1,14 @@
+@Api_HostAddress = http://localhost:5051
+
+POST {{Api_HostAddress}}/appointments/
+Accept: application/json
+Content-Type: application/json
+
+{
+  "customerName": "Jane Doe",
+  "time": "2025-10-01T10:00:00Z"
+}
+
+###
+
+GET {{Api_HostAddress}}/appointments/
