@@ -398,3 +398,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Save me from committing my subscription ID
+AppHost/appsettings.Development.json

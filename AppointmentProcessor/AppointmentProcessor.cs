@@ -1,8 +1,9 @@
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
+using Azure.Messaging.WebPubSub;
 using Microsoft.Azure.Cosmos;
 
-public class AppointmentProcessor(ServiceBusProcessor processor, [FromKeyedServices("appointments")]Container container) : BackgroundService
+public class AppointmentProcessor(ServiceBusProcessor processor, [FromKeyedServices("appointments")] Container container, WebPubSubServiceClient webpubsub) : BackgroundService
 {
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -21,6 +22,7 @@ public class AppointmentProcessor(ServiceBusProcessor processor, [FromKeyedServi
                 };
 
                 await container.CreateItemAsync(appointment, new PartitionKey(appointment.Id));
+                await webpubsub.SendToGroupAsync("appointments", JsonSerializer.Serialize(new { appointment.Id, appointment.Status }));
             }
 
             await args.CompleteMessageAsync(args.Message);

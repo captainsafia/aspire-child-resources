@@ -19,6 +19,7 @@ builder.AddAzureCosmosDatabase("appointments-app-db", configureClientOptions: op
     };
 })
 .AddKeyedContainer("appointments");
+builder.AddAzureWebPubSubServiceClient("apptnotifications");
 
 builder.Services.AddHostedService<AppointmentProcessor>();
 

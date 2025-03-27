@@ -1,6 +1,8 @@
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
+using Azure.Messaging.WebPubSub;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Azure;
 
 var builder = WebApplication.CreateBuilder(args);
     
@@ -12,6 +14,7 @@ builder.Services.AddSingleton<ServiceBusSender>(sp =>
     var client = sp.GetRequiredService<ServiceBusClient>();
     return client.CreateSender("appointment-requests");
 });
+builder.AddAzureWebPubSubServiceClient("apptnotifications");
 
 builder.Services.AddOpenApi();
 
@@ -22,13 +25,14 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.MapPost("/appointments", async (AppointmentRequest request, ServiceBusSender sender) =>
+app.MapPost("/appointments", async (AppointmentRequest request, ServiceBusSender sender, WebPubSubServiceClient hub) =>
 {
     await sender.SendMessageAsync(new ServiceBusMessage(JsonSerializer.Serialize(request)));
+    await hub.SendToGroupAsync("appointments", JsonSerializer.Serialize(new { request.CustomerName, Status = "Submitted" }));
     return TypedResults.Ok("Appointment request received.");
 });
 
-app.MapGet("/appointments", async (Container container) =>
+app.MapGet("/appointments", async (Container container, WebPubSubServiceClient hub) =>
 {
     // Fetch all appointments from the CosmosDB container
     var query = new QueryDefinition("SELECT * FROM c");
@@ -39,6 +43,7 @@ app.MapGet("/appointments", async (Container container) =>
         var response = await iterator.ReadNextAsync();
         appointments.AddRange(response);
     }
+    await hub.SendToGroupAsync("appointments", JsonSerializer.Serialize(new { Status = "Fetched", Count = appointments.Count }));
     return TypedResults.Ok(appointments);
 });
 
