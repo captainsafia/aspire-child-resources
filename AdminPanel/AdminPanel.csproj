@@ -5,7 +5,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Azure.Messaging.WebPubSub" Version="9.2.0-preview.1.25176.12" />
+    <PackageReference Include="Aspire.Azure.Messaging.WebPubSub" Version="9.2.0-preview.1.25178.3" />
   </ItemGroup>
 
   <PropertyGroup>

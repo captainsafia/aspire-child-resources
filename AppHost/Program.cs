@@ -1,4 +1,5 @@
 using Azure.Provisioning.ServiceBus;
+using Azure.Provisioning.WebPubSub;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ builder.AddProject<Projects.AppointmentProcessor>("appointment-processor")
     .WithReference(database)
     .WithReference(queue)
     .WithReference(hub)
+    .WithRoleAssignments(webpubsub, WebPubSubBuiltInRole.WebPubSubContributor)
     .WithRoleAssignments(serviceBus, ServiceBusBuiltInRole.AzureServiceBusDataReceiver);
 
 builder.AddProject<Projects.Api>("api")
@@ -26,10 +28,12 @@ builder.AddProject<Projects.Api>("api")
     .WithReference(container)
     .WithReference(queue)
     .WithReference(hub)
+    .WithRoleAssignments(webpubsub, WebPubSubBuiltInRole.WebPubSubContributor)
     .WithRoleAssignments(serviceBus, ServiceBusBuiltInRole.AzureServiceBusDataSender);
 
 builder.AddProject<Projects.AdminPanel>("admin-panel")
     .WithExternalHttpEndpoints()
-    .WithReference(hub);
+    .WithReference(hub)
+    .WithRoleAssignments(webpubsub, WebPubSubBuiltInRole.WebPubSubServiceReader);
 
 builder.Build().Run();

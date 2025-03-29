@@ -143,6 +143,14 @@
       "type": "azure.bicep.v0",
       "path": "appointment-processor-identity.module.bicep"
     },
+    "appointment-processor-roles-webpubsub": {
+      "type": "azure.bicep.v0",
+      "path": "appointment-processor-roles-webpubsub.module.bicep",
+      "params": {
+        "webpubsub_outputs_name": "{webpubsub.outputs.name}",
+        "principalId": "{appointment-processor-identity.outputs.principalId}"
+      }
+    },
     "appointment-processor-roles-servicebus": {
       "type": "azure.bicep.v0",
       "path": "appointment-processor-roles-servicebus.module.bicep",
@@ -159,17 +167,17 @@
         "principalId": "{appointment-processor-identity.outputs.principalId}"
       }
     },
-    "appointment-processor-roles-webpubsub": {
-      "type": "azure.bicep.v0",
-      "path": "appointment-processor-roles-webpubsub.module.bicep",
-      "params": {
-        "webpubsub_outputs_name": "{webpubsub.outputs.name}",
-        "principalId": "{appointment-processor-identity.outputs.principalId}"
-      }
-    },
     "api-identity": {
       "type": "azure.bicep.v0",
       "path": "api-identity.module.bicep"
+    },
+    "api-roles-webpubsub": {
+      "type": "azure.bicep.v0",
+      "path": "api-roles-webpubsub.module.bicep",
+      "params": {
+        "webpubsub_outputs_name": "{webpubsub.outputs.name}",
+        "principalId": "{api-identity.outputs.principalId}"
+      }
     },
     "api-roles-servicebus": {
       "type": "azure.bicep.v0",
@@ -184,14 +192,6 @@
       "path": "api-roles-cosmos.module.bicep",
       "params": {
         "cosmos_outputs_name": "{cosmos.outputs.name}",
-        "principalId": "{api-identity.outputs.principalId}"
-      }
-    },
-    "api-roles-webpubsub": {
-      "type": "azure.bicep.v0",
-      "path": "api-roles-webpubsub.module.bicep",
-      "params": {
-        "webpubsub_outputs_name": "{webpubsub.outputs.name}",
         "principalId": "{api-identity.outputs.principalId}"
       }
     },

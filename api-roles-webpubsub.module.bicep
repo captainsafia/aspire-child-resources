@@ -9,11 +9,11 @@ resource webpubsub 'Microsoft.SignalRService/webPubSub@2024-03-01' existing = {
   name: webpubsub_outputs_name
 }
 
-resource webpubsub_WebPubSubServiceOwner 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(webpubsub.id, principalId, subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '12cf5a90-567b-43ae-8102-96cf46c7d9b4'))
+resource webpubsub_WebPubSubContributor 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(webpubsub.id, principalId, subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8cf5e20a-e4b2-4e9d-b3a1-5ceb692c2761'))
   properties: {
     principalId: principalId
-    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '12cf5a90-567b-43ae-8102-96cf46c7d9b4')
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '8cf5e20a-e4b2-4e9d-b3a1-5ceb692c2761')
     principalType: 'ServicePrincipal'
   }
   scope: webpubsub
